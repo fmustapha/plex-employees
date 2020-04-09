@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const Joi = require("Joi");
 const app = express();
 const employees = require("./data/employees.json");
 
@@ -20,31 +21,31 @@ app.get("/api/employees", cors(corsOptions), (req, res, next) => {
 
 app.post("/api/employees", cors(corsOptions), (req, res, next) => {
   //Validate the req.body
-  // return 400 - bad request if invalid
-  const { name } = req.body;
-  if (employees.find((e) => e.name === name)) {
-    return res.status(400).send("The employee already exists");
+  const { error } = validateEmployee(req.body);
+  if (error) {
+    return res.status(400).send(error.details[0].message);
   }
 
   //Check if the employee already exists by checking the name
-  //If true return 300 already exists . error
+  employees.forEach((employee) => {
+    if (req.body.name === employee.name)
+      return res.status(409).send("Employee already exists");
+  });
 
-  // push the new employee data into the existing employees array
-  console.log(req.body);
-  let id = employees.length;
-  id += 1;
+  //Push the new employee data into the existing employees array
+  let id = employees.length + 1;
   const employee = { id, ...req.body };
   employees.push(employee);
-  res.status(200).send(employees);
+  return res.send(employees);
 });
 
 app.put("/api/employees/:id", cors(corsOptions), (req, res, next) => {
-  console.log(req.params.id, "id");
   const employee = employees.find((e) => e.id === parseInt(req.params.id, 10));
   if (!employee) return res.status(404).send("The employee does not exist");
 
-  if (!validateEmployee(req.body)) {
-    return res.status(400).send("The name should be 5 to 20 characters long");
+  const { error } = validateEmployee(req.body);
+  if (error) {
+    return res.status(400).send(error.details[0].message);
   }
 
   const { name, code, profession, color, city, branch, assigned } = req.body;
@@ -56,8 +57,7 @@ app.put("/api/employees/:id", cors(corsOptions), (req, res, next) => {
   employee.branch = branch;
   employee.assigned = assigned;
 
-  res.status(200);
-  res.send(employee);
+  return res.status(200).send(employee);
 });
 
 app.delete("/api/employees/:id", (req, res) => {
@@ -66,15 +66,23 @@ app.delete("/api/employees/:id", (req, res) => {
 
   const index = employees.indexOf(employee);
   employees.splice(index, 1);
-  res.send(employees);
+  return res.send(employees);
 });
 
 function validateEmployee(data) {
-  const { name } = data;
-  if (name.length >= 5 && name.length <= 20) {
-    return true;
-  }
-  return false;
+  const schema = {
+    name: Joi.string().min(4).max(15).required(),
+    code: Joi.string().min(2).max(12).required(),
+    profession: Joi.string().min(4).max(12).required(),
+    color: Joi.string().min(4).max(12).required(),
+    city: Joi.string().min(3).max(15).required(),
+    branch: Joi.string().min(4).max(12).required(),
+    assigned: Joi.boolean(),
+  };
+
+  return Joi.validate(data, schema);
 }
 
-app.listen(port, () => console.log(`Job Dispatch API running on port ${port}!`));
+app.listen(port, () =>
+  console.log(`Job Dispatch API running on port ${port}!`)
+);
