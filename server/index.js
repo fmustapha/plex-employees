@@ -1,10 +1,27 @@
+const startUpDebugging = require('debug')('app:startup');
+const dbDebugger = require('debug')('app:db')
+const config = require("config");
+const helmet = require("helmet");
+const morgan = require("morgan");
 const express = require("express");
 const cors = require("cors");
 const Joi = require("Joi");
 const app = express();
 const employees = require("./data/employees.json");
+const auth = require('./middleware/auth');
 
 app.use(express.json());
+app.use(helmet());
+if (app.get("env") === "development") {
+  app.use(morgan("tiny"));
+  startUpDebugging("morgan running...");
+}
+
+//Db Debugging
+dbDebugger('Connecting to the Database...')
+
+//Configuration
+console.log("Application Name: " + config.get("name"));
 
 const port = process.env.PORT || 8080;
 
@@ -66,7 +83,7 @@ app.delete("/api/employees/:id", (req, res) => {
 
   const index = employees.indexOf(employee);
   employees.splice(index, 1);
-  return res.send(employees);
+  return res.send(employee);
 });
 
 function validateEmployee(data) {
