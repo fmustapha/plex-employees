@@ -4,7 +4,6 @@
   "license": "None provided",
   "private": true,
   "dependencies": {
-    "axios": "^0.19.2",
     "concurrently": "^3.6.0",
     "config": "^3.3.1",
     "cors": "^2.8.4",
@@ -16,11 +15,9 @@
     "nodemon": "^1.17.5",
     "pg": "^8.0.2",
     "pg-hstore": "^2.3.3",
-    "react": "16.8.6",
-    "react-dom": "16.8.6",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
     "react-scripts": "1.1.4",
-    "react-table": "^7.0.4",
-    "react-toastify": "^5.5.0",
     "sequelize": "^5.21.6"
   },
   "scripts": {
