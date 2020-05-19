@@ -1,36 +1,74 @@
-import React from "react";
+import React, { useState, useEffect, useMemo } from "react";
+import { getEmployees } from "./services/employeeService";
+import Table from "./components/table";
 
-class App extends React.Component {
-  state = {
-    employees: [],
-  };
+import "./App.css";
 
-  componentWillMount = () => {
-    fetch("http://localhost:8080/")
-      .then((response) => response.json())
-      .then((employees) => this.setState({ employees }));
-  };
+const App = () => {
+  const [employees, setEmployees] = useState([]);
 
-  render() {
-    const { employees } = this.state;
+  useEffect(() => {
+    async function getEmp() {
+      try {
+        const result = await getEmployees();
+        setEmployees(result.data);
+      } catch (err) {
+        console.log(err, "<--err");
+      }
+    }
+    getEmp();
+  }, []);
 
-    console.log(this.state);
+  let newData = employees.map((e) => {
+    return { ...e, assigned: e.assigned === false ? "No" : "Yes" };
+  });
 
-    return (
-      <div className="App">
-        <h1>Plexxis Employees</h1>
-        {employees.map((employee) => (
-          <div key={employee.id}>
-            {Object.keys(employee).map((key) => (
-              <span key={key}>
-                {key}:{employee[key]}
-              </span>
-            ))}
-          </div>
-        ))}
-      </div>
-    );
-  }
-}
+  const columns = useMemo(
+    () => [
+      {
+        Header: "Id",
+        accessor: "id",
+      },
+      {
+        Header: "Name",
+        accessor: "name",
+      },
+      {
+        Header: "Code",
+        accessor: "code",
+      },
+      {
+        Header: "Profession",
+        accessor: "profession",
+      },
+      {
+        Header: "Color",
+        accessor: "color",
+      },
+      {
+        Header: "City",
+        accessor: "city",
+      },
+      {
+        Header: "Branch",
+        accessor: "branch",
+      },
+      {
+        Header: "Assigned",
+        accessor: "assigned",
+      },
+    ],
+    []
+  );
+
+  const data = useMemo(() => newData, [newData]);
+
+  return (
+    <div className="App">
+      <h1>Plex Employees</h1>
+      <Table columns={columns} data={data} />
+    </div>
+  );
+};
 
 export default App;

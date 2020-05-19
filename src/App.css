@@ -3,3 +3,8 @@ h1 {
   padding: 20px;
   margin: 0;
 }
+
+.row {
+  display: inline-block;
+  margin-left: 10px;
+}
