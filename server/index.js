@@ -11,25 +11,15 @@ const auth = require("./middleware/auth");
 const log = require("./middleware/logger");
 
 app.use(express.json());
-
-app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  next();
-});
-
-app.use(helmet()); /* Secure app, set headers with helmet */
+app.use(helmet());
 if (app.get("env") === "development") {
   app.use(morgan("tiny"));
   startUpDebugging("morgan running...");
 }
 app.use("/api/employees", employees);
-app.use("/api", home);
+app.use("/", home);
 
-app.use(log);
+app.use(log)
 
 const port = process.env.PORT || 8080;
 

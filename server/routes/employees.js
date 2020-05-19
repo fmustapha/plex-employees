@@ -9,7 +9,6 @@ var corsOptions = {
   optionsSuccessStatus: 200,
 };
 
-
 router.get("/:id", cors(corsOptions), (req, res, next) => {
   const employee = employees.find((e) => e.id === parseInt(req.params.id, 10));
   if (!employee) return res.status(404).send("The employee does not exist");
