@@ -1,0 +1,31 @@
+/* 
+COLOURS
+lightest blue: #C5CAE9
+very light blue: #9FA8DA
+blue:  #6678b1;
+light-blue: #7986CB;
+light grey: #f7f7f7;
+grey: #f7f7f7;
+*/
+
+table {
+  border-collapse: collapse;
+  text-align: left;
+}
+
+thead tr th {
+  border-bottom: solid 2px #6678b1;
+  padding: 15px 40px;
+}
+
+tbody tr td {
+  border-bottom: solid 1px #eceff1;
+  padding: 15px 40px 5px 40px;
+}
+
+tbody tr:nth-child(2n) td {
+  background-color: #f7f7f7;
+}
+tbody tr:hover {
+  color: #7986cb;
+}

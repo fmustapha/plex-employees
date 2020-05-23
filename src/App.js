@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { getEmployees } from "./services/employeeService";
-import Table from "./components/table";
-
-import "./App.css";
+import Table from "./components/Table";
 
 const App = () => {
   const [employees, setEmployees] = useState([]);
@@ -20,15 +18,12 @@ const App = () => {
   }, []);
 
   let newData = employees.map((e) => {
+    delete e.id
     return { ...e, assigned: e.assigned === false ? "No" : "Yes" };
   });
 
   const columns = useMemo(
     () => [
-      {
-        Header: "Id",
-        accessor: "id",
-      },
       {
         Header: "Name",
         accessor: "name",
