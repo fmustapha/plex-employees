@@ -1,6 +1,11 @@
 import React, { useState, useEffect, useMemo } from "react";
+import { Switch, Route, Redirect } from "react-router-dom";
 import { getEmployees } from "./services/employeeService";
-import Table from "./components/Table";
+import Table from "./components/common/Table";
+
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
+import EmployeeForm from "./components/common/employeeForm";
 
 const App = () => {
   const [employees, setEmployees] = useState([]);
@@ -18,7 +23,7 @@ const App = () => {
   }, []);
 
   let newData = employees.map((e) => {
-    delete e.id
+    delete e.id;
     return { ...e, assigned: e.assigned === false ? "No" : "Yes" };
   });
 
@@ -59,10 +64,22 @@ const App = () => {
   const data = useMemo(() => newData, [newData]);
 
   return (
-    <div className="App">
+    <React.Fragment>
+      <ToastContainer autoClose={8000} dragable={false} />
       <h1>Plex Employees</h1>
-      <Table columns={columns} data={data} />
-    </div>
+      <div className="App">
+        <Switch>
+          <Route path="/add-employee" component={EmployeeForm} />
+          <Route
+            path="/"
+            render={(props) => (
+              <Table columns={columns} data={data} {...props} />
+            )}
+          />
+          <Redirect from="/" exact to="/employees" />
+        </Switch>
+      </div>
+    </React.Fragment>
   );
 };
 
